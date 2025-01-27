@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
+	
+	<sub-flow name="com-createAccount-records" doc:id="66420eef-04ba-4751-96ef-38100f684352" >
+		<salesforce:create-job-bulk-api-v2 doc:name="Create job bulk api v 2" doc:id="1ecf50ef-872e-4129-9730-66e2374a6d61" config-ref="Salesforce_Config1" objectType="#[vars.ObjectName]" operation="upsert" lineEnding="CRLF" externalIdFieldName="Leg_External_Id__c">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}"/>
+		</salesforce:create-job-bulk-api-v2>
+		<set-variable value="#[payload.id]" doc:name="Set Variable" doc:id="1671b719-7e27-4383-b03e-cdf5486ce04a" variableName="jobId"/>
+		<logger level="INFO" doc:name="Log INFO : Start SF Flow" doc:id="134b3735-aa06-4470-9fee-063ac5c8e234" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Created the records in SF with Bulk JobId: " ++ vars.jobId,&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+		<salesforce:get-job-state-bulk-api-v2 doc:name="Get job state bulk api v 2" doc:id="58fc990a-b899-489c-b4a1-5bd4025bc41b" config-ref="Salesforce_Config1" id="#[vars.jobId]">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+		</salesforce:get-job-state-bulk-api-v2>
+		<ee:transform doc:name="jobResult" doc:id="f660d2c8-0b1a-4d34-bd50-6fb4080a8f77" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	jobId : vars.jobId,
+	result : payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:retrieve-job-successful-results-bulk-v2 doc:name="Retrieve job successful results bulk v 2" doc:id="5e2565e4-cd8f-4bc5-8ca0-1f58c2105898" config-ref="Salesforce_Config1" id="#[vars.jobId]">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+		</salesforce:retrieve-job-successful-results-bulk-v2>
+		<choice doc:name="Choice" doc:id="2dfe09e0-47bb-4f1a-9efd-7336ab24de07" >
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<ee:transform doc:name="successResponse" doc:id="1774c69b-b3c5-4e60-85f1-183371fb90e5" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="patientId" ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) -> {
+	salesforceId: item.id default "",
+	message: "Created records in Salesforce."	
+})]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+		</choice>
+		<salesforce:retrieve-job-failed-results-bulk-v2 doc:name="Retrieve job failed results bulk v 2" doc:id="5406d889-3967-4e55-8cb5-90c3333ca0ae" config-ref="Salesforce_Config1" id="#[vars.jobId]">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+		</salesforce:retrieve-job-failed-results-bulk-v2>
+		<choice doc:name="Choice" doc:id="8d6b4165-0803-48c6-afb5-8b2482a4deb2" >
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<ee:transform doc:name="Transform Message" doc:id="68b5e849-f948-48ef-a3cc-3988cd7c413b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) -> {
+	salesforceId: item.id default "",
+	errorMessage: item.errorMessage default '',
+		
+	})]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+		</choice>
+	</sub-flow>
+	
+	
+	</mule>

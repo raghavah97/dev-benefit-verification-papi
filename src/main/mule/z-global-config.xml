@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
+	<configuration doc:name="Global_Error_Configuration" doc:id="2c04427d-f6a8-4c73-9e36-dcb647db2be5" defaultErrorHandler-ref="global-error-handling" />
+	<salesforce:sfdc-config name="Salesforce_Config1" doc:name="Salesforce Config" doc:id="cdc20280-732d-41d7-9fb2-f862c2dd4d14" >
+		<salesforce:basic-connection username="${sf.user}" password="${secure::sf.password}" securityToken="${secure::sf.token}" url="${sf.url}"/>
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Global_Properties_Config" doc:id="aa7dc9de-afa3-4a71-9f4a-265a3505d4ce" file="properties/${mule.env}.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="f3fdfcb4-7372-4884-b6a0-062a009f8699" file="properties/secure-${mule.env}.yaml" key="${mule.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="03078b74-dfa1-4cdd-84b8-31ff2f605aa3" >
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="${https.port}" >
+			<tls:context >
+				<tls:key-store type="jks" path="cert/secureRequest.jks" keyPassword="${secure::sf.password}" password="${secure::sf.password}"/>
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
+	<cloudhub:config name="CloudHub_Config" doc:name="CloudHub Config" doc:id="0833f6c5-1caa-4677-9222-c24a1f25e698" >
+		<cloudhub:connection username="${cloudhub.user}" password="${secure::sf.password}" environment="DEV" />
+	</cloudhub:config>
+	<api-gateway:autodiscovery apiId="${api.Id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="803253a7-3ed5-4bdc-8a90-9396084b1ce4" flowRef="care-benefit-request-api-main" />
+</mule>

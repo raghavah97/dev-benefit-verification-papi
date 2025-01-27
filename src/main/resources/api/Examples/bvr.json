@@ -1,0 +1,85 @@
+{
+  "careBenefitVerifications": [
+    {
+      "patient": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "dateOfBirth": "1985-05-12",
+        "gender": "Male"
+      },
+      "insuranceInfo": {
+        "providerName": "BlueCrossBlueShield",
+        "policyNumber": "BCBS123456789",
+        "groupNumber": "GRP987654",
+        "subscriberId": "SUB789456123",
+        "startDate": "2022-01-01",
+        "endDate":"2040-01-01",
+        "lastVerfied": "2024-07-15"
+      },
+      "provider": {
+        "npi": "1234567890",
+        "providerName": "BlueCrossBlueShield"
+      },
+      "service": {
+        "serviceType": "Consultation",
+        "serviceDate": "2024-06-15",
+        "diagnosisCode": "J20.9",
+        "procedureCode": "99213"
+      }
+    },
+    {
+      "patient": {
+        "firstName": "Alice",
+        "lastName": "Johnson",
+        "dateOfBirth": "1990-09-25",
+        "gender": "Female"
+      },
+      "insuranceInfo": {
+        "providerName": "UnitedHealthcare",
+        "policyNumber": "UHC987654321",
+        "groupNumber": "GRP654321",
+        "subscriberId": "SUB654987321",
+        "startDate": "2002-01-01",
+        "endDate":"2020-01-01",
+        "lastVerfied": "2018-01-11"
+      },
+      "provider": {
+        "npi": "0987654321",
+        "providerName": "UnitedHealthcare"
+      },
+      "service": {
+        "serviceType": "Surgery",
+        "serviceDate": "2024-07-10",
+        "diagnosisCode": "K35.80",
+        "procedureCode": "44950"
+      }
+    },
+    {
+      "patient": {
+        "firstName": "Robert",
+        "lastName": "Williams",
+        "dateOfBirth": "1978-03-17",
+        "gender": "Male"
+      },
+      "insuranceInfo": {
+        "providerName": "Aetna",
+        "policyNumber": "AET654321987",
+        "groupNumber": "GRP321654",
+        "subscriberId": "SUB321987654",
+        "startDate": "1998-01-01",
+        "endDate":"2029-01-01",
+        "lastVerfied": "2025-01-15"
+      },
+      "provider": {
+        "npi": "1122334455",
+        "providerName": "Aetna"
+      },
+      "service": {
+        "serviceType": "Physical Therapy",
+        "serviceDate": "2024-08-20",
+        "diagnosisCode": "M54.5",
+        "procedureCode": "97110"
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="retrieve-care-benefit-verification-requestFlow" doc:id="1843edad-8791-4202-9593-1dbd6b9494d9" >
+		<logger level="INFO" doc:name="Log INFO : Start Retrieve CBVR Flow" doc:id="cd19f169-4c5e-484a-9e24-b2af62f3b246" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Before querying SF to fetch the created records",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+		<salesforce:query doc:name="careBenefitVerifyRequest" doc:id="0c709cc6-7fe0-4ad4-a989-02d277a73e9b" config-ref="Salesforce_Config1">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+			<salesforce:salesforce-query ><![CDATA[select Id,Name, MemberPlan.Name, MemberPlan.Member.Name from CareBenefitVerifyRequest where LastModifiedDate = TODAY]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="benefitVerifyRqst" doc:id="38b7b7e7-3b9b-4467-bf8d-bfabaf03929c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+---
+payload map ((item, index) -> {
+    Id : item.Id,
+    Name: item.Name,
+    MemberPlan: item.MemberPlan.Name,
+    PatientName: item.MemberPlan.Member.Name
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log INFO : End CBVR Flow" doc:id="7fbcaed1-f250-4a29-ad44-9e1819857a02" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Retrived the benefit verify requests from SF",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+	</flow>
+</mule>

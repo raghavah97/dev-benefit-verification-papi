@@ -1,0 +1,15 @@
+#%RAML 1.0 SecurityScheme
+type: x-clientIdEnforcement
+displayName: Client ID Enforcement
+description: This security scheme validates requests to the API using Client Id and Client Secret provided in the request header.
+
+describedBy:
+  headers:
+    client_id:
+      description: Client Id of application invoking the API.
+      type: string
+      example: 'f2a1ed52710d4533bde25be6da03b6e3'
+    client_secret:
+      description: Client Secret of application invoking the API.
+      type: string
+      example: '269d98e4922fb3895e9ae2108cbb5064'

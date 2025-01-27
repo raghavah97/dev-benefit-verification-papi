@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<flow name="com-create-bvq-request" doc:id="b0e8eab9-1f16-4880-89ed-e640afacf4d2" >
+		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="1529894b-7465-4700-a849-a6d4ceea0454" variableName="uniqueId"/>
+		<ee:transform doc:name="InitiateVariables" doc:id="00b07be4-8394-4521-a861-cd65b8dabc9a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="patient" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.careBenefitVerifications.patient]]></ee:set-variable>
+				<ee:set-variable variableName="payerId" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="insuranceId" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="patientNames" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.careBenefitVerifications.patient map () -> {
+    Name : $.firstName ++ $.lastName
+}]]></ee:set-variable>
+				<ee:set-variable variableName="insuranceProvider" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.careBenefitVerifications.provider]]></ee:set-variable>
+				<ee:set-variable variableName="service" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.careBenefitVerifications.service]]></ee:set-variable>
+				<ee:set-variable variableName="coverageBenefitId" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="insuranceInfo" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.careBenefitVerifications.insuranceInfo]]></ee:set-variable>
+				<ee:set-variable variableName="memberPlanId" ><![CDATA[[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log INFO : Start RT Flow" doc:id="4b44f5dd-1965-45e0-a461-31b0aea6547a" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Calling the Record types of Account",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]' />
+		<flow-ref doc:name="com-recordType-subflow" doc:id="977a3e9b-c814-4ddc-af4c-aa718240906f" name="com-recordType-subflow"/>
+		<logger level="INFO" doc:name="Log INFO : Start MemberPlan Flow" doc:id="5375a2a8-61c2-40b3-b753-3fba56abf639" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Invoking the flow to create member plans",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]' />
+		<flow-ref doc:name="com-createMemberPlan-records" doc:id="40162c24-5582-4515-b2ee-19ab71b76717" name="com-createMemberPlan-records"/>
+		<logger level="INFO" doc:name="Log INFO : Start CBItems Flow" doc:id="2183a194-5ad1-4de3-9525-3c6dff68eaea" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Invoking the flow to create Coverage Benefit Items",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]' />
+		<flow-ref doc:name="com-createCoverageBenefitItem-recods" doc:id="cc8eeb64-8293-4b67-8a00-c859316f583e" name="com-createCoverageBenefitItem-recods"/>
+		<logger level="INFO" doc:name="Log INFO : Start CBVR Flow" doc:id="fa772ef4-7f5d-4895-b25c-4edca5220e42" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Invoking the flow to create the cbnr records in SF",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]' />
+		<flow-ref doc:name="com-createCareBenefitVerifyReq-records" doc:id="df349a43-377d-455a-8e8d-9909bec5219f" name="com-createCareBenefitVerifyReq-records"/>
+		<ee:transform doc:name="Transform Message" doc:id="842bc2b7-1de6-4b57-9ca9-74e1ccc8ff46" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.patientId]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

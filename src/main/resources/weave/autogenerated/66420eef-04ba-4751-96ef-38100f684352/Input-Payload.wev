@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_66420eef_04ba_4751_96ef_38100f684352_Input_Payload = Array<{|  Status: "Completed" | "Error",   Leg_External_Id__c: String {"typeId": "Leg_External_Id__c"} | Null|}>
+

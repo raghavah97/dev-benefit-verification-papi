@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_b0e8eab9_1f16_4880_89ed_e640afacf4d2_Output_Variables_covBenVerifyReq = Array<CareBenefitVerifyRequest {"typeId": "CareBenefitVerifyRequest",
+"label": "Care Benefit Verify Request"}>
+type CareBenefitVerifyRequest = {|
+  CoverageBenefit?: Array<{|    IndividualInNetworkDeductibleRemaining?: Number {"typeId": "IndividualInNetworkDeductibleRemaining"},     IndividualInNetworkOutofPocketRemaining?: Number {"typeId": "IndividualInNetworkOutofPocketRemaining"},     IndividualOutofNetworkDeductibleRemain?: Number {"typeId": "IndividualOutofNetworkDeductibleRemain"},     IndividualOutofNetworkOutofPocketRemain?: Number {"typeId": "IndividualOutofNetworkOutofPocketRemain"},     MemberPlanId?: String,     Name?: String {"typeId": "Name"}  |}>, 
+  Id?: String {"typeId": "Id"}, 
+  Leg_External_Id__c?: String {"typeId": "Leg_External_Id__c"}, 
+  MemberPlanId?: String
+|} {"typeId": "CareBenefitVerifyRequest",
+"label": "Care Benefit Verify Request"}
+
+
+

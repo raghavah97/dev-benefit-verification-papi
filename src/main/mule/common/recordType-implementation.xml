@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<sub-flow name="com-recordType-subflow" doc:id="544a946f-ece8-40a2-900a-d60585c0a718" >
+		<until-successful maxRetries="${reconnection.attempts}" doc:name="Until Successful" doc:id="3c38b2ea-95fb-4019-ad56-a4bf856ce3a2" millisBetweenRetries="${reconnection.frequency}">
+			<salesforce:query doc:name="PersonAccount" doc:id="59eb2126-2a2c-4263-b71a-45064fdcf20b" config-ref="Salesforce_Config1" target="perAccRt" targetValue="#[payload[0].Id]">
+			<salesforce:salesforce-query><![CDATA[select Id from RecordType where SobjectType = 'Account' and Name = 'Patient']]></salesforce:salesforce-query>
+		</salesforce:query>
+		</until-successful>
+		<ee:transform doc:name="Transform Message" doc:id="454e7256-bffe-4354-947d-f78cc60c6d24">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv lineSeparator = '\r\n', quoteValues = true
+import * from dw::core::Strings
+---
+vars.patient map (item, value) -> {
+	
+	Name : item.firstName default '' ++ item.lastName default '',
+	Patient_Gender__c: item.gender default null,
+	Date_of_Birth__c: item.dateOfBirth as Date as String {
+		format : 'MM/dd/yyyy'
+	} default null,
+	RecordTypeId: vars.perAccRt,
+	Leg_External_Id__c: item.firstName[0 to 2] ++ (item.lastName[0 to 3] default "") ++ item.gender[0] ++ item.dateOfBirth as Date as String {
+		format : 'MM/dd/yyyy'
+	} default null
+	
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="objectName" ><![CDATA["Account"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log INFO : Start PatAccounts Flow" doc:id="2ad218b3-8f10-4b03-8b58-38695ecc97c4" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Invoking the flow to create Patient records in SF",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+		<flow-ref doc:name="com-createAccount-records" doc:id="fcbd317c-d7d2-4cfc-9b45-98245971326f" name="com-createAccount-records"/>
+		<until-successful maxRetries="${reconnection.attempts}" doc:name="Until Successful" doc:id="9124e1d2-f60b-4c83-b553-3c07be189ae3" millisBetweenRetries="${reconnection.frequency}">
+			<salesforce:query doc:name="Insuranceprovider" doc:id="c6d32471-7077-498a-9cb0-482e6b46f682" config-ref="Salesforce_Config1" target="insPvdrRt" targetValue="#[payload[0].Id]">
+			<salesforce:salesforce-query><![CDATA[select Id,RecordType.Name from RecordType where SobjectType = 'Account' and RecordType.Name = 'InsurancePayer']]></salesforce:salesforce-query>
+		</salesforce:query>
+		</until-successful>
+		<ee:transform doc:name="Transform Message" doc:id="39dbaa0c-5383-480d-821b-b1a970f4b071">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv lineSeparator = '\r\n', quoteValues = true
+import * from dw::core::Strings
+---
+vars.insuranceProvider map (item, value) -> {
+	
+	Name : item.providerName default null,
+	National_Provider_Identifier__c: item.npi default null,
+	RecordTypeId: vars.insPvdrRt,
+	Leg_External_Id__c: item.providerName[0 to 2] ++ (item.providerName[0 to 3] default "") ++ item.npi default null
+	
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="objectName" ><![CDATA["Account"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log INFO : Start InAccounts Flow" doc:id="060a5e93-42f7-4eac-8566-cf27ee62aec8" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Invoking the flow to create Provider records",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+		<flow-ref doc:name="com-createAccount-records" doc:id="6b904ec4-d5de-4649-9cb2-002997ad2122" name="com-createAccount-records"/>
+	</sub-flow>
+	
+	
+	
+	</mule>

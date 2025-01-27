@@ -1,0 +1,18 @@
+https:
+    port: "8082"
+    
+
+api:
+  Id: "20176060"
+  
+cloudhub:
+  user: "devahanumanula"
+ 
+sf:
+  user: "hdsraghava-4pee@force.com"
+  url: "https://student-a0.my.salesforce.com/services/Soap/u/55.0"
+  
+  
+reconnection:
+  frequency: "4000"
+  attempts: "3"

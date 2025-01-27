@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
+	<flow name="update-verification-request-statusFlow" doc:id="fa6a00af-dfae-4f5b-806c-3918682f800a" initialState="stopped">
+		<scheduler doc:name="Scheduler" doc:id="76ee2025-86a7-4907-a588-bdf9be0021c8" >
+			<scheduling-strategy >
+				<cron expression="0 0 7 ? * * 2050" timeZone="UTC" />
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="Log INFO : Start Update CBVR Flow" doc:id="af260d71-91aa-4a5b-bd0d-92adf65e8507" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Before the flow to update the Benefit Verification Requests",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]' />
+		<salesforce:query doc:name="CBVR" doc:id="17f25177-3261-4904-86fb-f4291287a540" config-ref="Salesforce_Config1" target="covBenVerifyReq">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+			<salesforce:salesforce-query><![CDATA[select Id,Leg_External_Id__c, MemberPlanId,CoverageBenefit.Name, CoverageBenefit.MemberPlanId, CoverageBenefit.IndividualInNetworkDeductibleRemaining,CoverageBenefit.IndividualInNetworkOutofPocketRemaining, CoverageBenefit.IndividualOutofNetworkDeductibleRemain, CoverageBenefit.IndividualOutofNetworkOutofPocketRemain from CareBenefitVerifyRequest where LastModifiedDate = TODAY]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<salesforce:query doc:name="BenItem" doc:id="72fd3e6b-6fc8-495d-9e94-2f6ae21aa31c" config-ref="Salesforce_Config1" target="covBenfitItem">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+			<salesforce:salesforce-query ><![CDATA[select Id, IsActive, IsInPlanNetwork,CoverageBenefit.Name from CoverageBenefitItem where LastModifiedDate = TODAY ]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="ad8fe739-d4fc-49c3-96b6-65ebfc9d171b">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="benfitItem" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.covBenfitItem map ((item, index) -> {
+    Id : item.Id,
+    Name: item.CoverageBenefit.Name,
+    IsActive: item.IsActive,
+    InNetwork: item.IsInPlanNetwork
+
+    
+}) orderBy($.Name)]]></ee:set-variable>
+				<ee:set-variable variableName="BenVerifyReq" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.covBenVerifyReq map((item, index) -> {
+    Id : item.Id,
+    External_id: item.Leg_External_Id__c,
+    IndividualInNetworkOutofPocketRemaining: item.CoverageBenefit.IndividualInNetworkOutofPocketRemaining,
+    IndividualOutofNetworkOutofPocketRemain: item.CoverageBenefit.IndividualOutofNetworkOutofPocketRemain,
+    IndividualInNetworkDeductibleRemaining: item.CoverageBenefit.IndividualInNetworkDeductibleRemaining,
+    IndividualOutofNetworkDeductibleRemain:item.CoverageBenefit.IndividualOutofNetworkDeductibleRemain,
+    Name: item.CoverageBenefit.Name,
+
+    
+})orderBy ($.Name)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="c00f9f48-87de-4802-a4b9-c85bef71e97e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv lineSeparator = '\r\n', quoteValues = true
+import * from dw::core::Strings
+---
+vars.BenVerifyReq map ((item, index) -> {
+
+   Status: (if(vars.benfitItem.IsActive[index] == 'true' and vars.benfitItem.Name[index] == item.Name and vars.benfitItem.InNetwork[index] =='true') (if(item.IndividualInNetworkDeductibleRemaining > 0 and item.IndividualInNetworkOutofPocketRemaining > 0) 'Completed'  else 'Error') else if (vars.benfitItem.IsActive[index] == 'true' and vars.benfitItem.Name[index] == item.Name and vars.benfitItem.InNetwork[index] =='false') (if(item.IndividualOutofNetworkDeductibleRemain > 0 and item.IndividualOutofNetworkOutofPocketRemain > 0) "Completed" else "Error" )else "Error"),
+   Leg_External_Id__c: item.External_id
+})]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="ObjectName" ><![CDATA["CareBenefitVerifyRequest"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="com-createAccount-records" doc:id="c98a4e15-8a12-470a-ad6c-67630fddfcdf" name="com-createAccount-records"/>
+		<logger level="INFO" doc:name="Log INFO : End Update CBVR Flow" doc:id="063c1c42-89e6-452b-9306-6665ed14076b" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Updated the Benefit Verification Requests Successfully.",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+		<logger level="INFO" doc:name="Placeholder for cloudHub Notifications" doc:id="0fe6d867-1fa5-41c0-8fd2-a2f66fe7c64a" />
+	</flow>
+</mule>

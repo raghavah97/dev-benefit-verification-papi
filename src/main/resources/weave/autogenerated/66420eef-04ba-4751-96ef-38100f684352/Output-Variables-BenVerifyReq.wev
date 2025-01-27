@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_66420eef_04ba_4751_96ef_38100f684352_Output_Variables_BenVerifyReq = Array<{|  Id: String {"typeId": "Id"} | Null,   External_id: String {"typeId": "Leg_External_Id__c"} | Null,   IndividualInNetworkOutofPocketRemaining: Array<Number {"typeId": "IndividualInNetworkOutofPocketRemaining"}> | Null, 
+  IndividualOutofNetworkOutofPocketRemain: Array<Number {"typeId": "IndividualOutofNetworkOutofPocketRemain"}> | Null, 
+  IndividualInNetworkDeductibleRemaining: Array<Number {"typeId": "IndividualInNetworkDeductibleRemaining"}> | Null, 
+  IndividualOutofNetworkDeductibleRemain: Array<Number {"typeId": "IndividualOutofNetworkDeductibleRemain"}> | Null, 
+  Name: Array<String {"typeId": "Name"}> | Null
+|}>
+

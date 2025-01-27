@@ -1,0 +1,75 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  careBenefitVerifications:
+    type: array
+    items:
+      type: object
+      properties:
+        patient:
+          type: object
+          properties:
+            firstName: 
+              type: string
+              required: true
+            lastName: 
+              type: string
+              required: true
+            dateOfBirth: 
+              type: string
+              pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$"
+              required: true
+            gender: 
+              type: string
+              enum: [Male, Female, Other]
+              required: true
+        insuranceInfo:
+          type: object
+          properties:
+            providerName: 
+              type: string
+              required: true
+            policyNumber: 
+              type: string
+              required: true
+            groupNumber: 
+              type: string
+              required: true
+            subscriberId?: 
+              type: string
+            startDate?: 
+              type: string
+              pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$"            
+            endDate?: 
+              type: string
+              pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$"             
+            lastVerified?: 
+              type: string
+              pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$"
+              
+        provider:
+          type: object
+          properties:
+            npi: 
+              type: string
+              pattern: "^[0-9]{10}$"
+              required: true
+            providerName: 
+              type: string
+              required: true
+        service:
+          type: object
+          properties:
+            serviceType: 
+              type: string
+              required: true
+            serviceDate: 
+              type: string
+              pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$"
+              required: true
+            diagnosisCode: 
+              type: string
+              required: true
+            procedureCode: 
+              type: string
+              required: true

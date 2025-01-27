@@ -1,0 +1,6 @@
+%dw 2.0
+
+type auto_1843edad_8791_4202_9593_1dbd6b9494d9_Output_Payload = Array<{|  Id: String {"typeId": "Id"} | Null,   Name: String {"typeId": "Name"} | Null,   MemberPlan: Array<String {"typeId": "Name"}> | Null, 
+  PatientName: Null
+|}>
+

@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_66420eef_04ba_4751_96ef_38100f684352_Input_Variables_covBenfitItem = Array<CoverageBenefitItem {"typeId": "CoverageBenefitItem",
+"label": "Coverage Benefit Item"}>
+type CoverageBenefitItem = {|
+  CoverageBenefit?: Array<{| Name?: String {"typeId": "Name"} |}>, 
+  Id?: String {"typeId": "Id"}, 
+  IsActive?: Boolean {"typeId": "IsActive"}, 
+  IsInPlanNetwork?: Boolean {"typeId": "IsInPlanNetwork"}
+|} {"typeId": "CoverageBenefitItem",
+"label": "Coverage Benefit Item"}
+
+
+

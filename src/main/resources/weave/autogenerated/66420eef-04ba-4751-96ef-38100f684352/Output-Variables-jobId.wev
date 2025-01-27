@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_66420eef_04ba_4751_96ef_38100f684352_Output_Variables_jobId = String | Null
+

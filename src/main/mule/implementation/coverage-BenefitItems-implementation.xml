@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	
+	<sub-flow name="com-createCoverageBenefitItem-recods" doc:id="597b5ef8-5cf5-4abe-9003-1fa2489e290e" >
+		<logger level="INFO" doc:name="Logger" doc:id="99720b2d-42aa-4c6a-950b-18a56eba8b84" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Querying the Coverage Benefits to fetch related Benefit",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+		<foreach doc:name="For Each" doc:id="41548063-4f9c-4cdc-ad9f-fa8a2c534d15" collection="#[vars.insuranceInfo.providerName]" >
+			<salesforce:query doc:name="cvrgBenefit" doc:id="e2299313-251d-4b24-887d-0042a2df5f99" config-ref="Salesforce_Config1">
+				<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
+				<salesforce:salesforce-query ><![CDATA[#["select Id,Name from CoverageBenefit where Name = '$(payload)Dental-Coverage Benefits'"]]]></salesforce:salesforce-query>
+			</salesforce:query>
+			<ee:transform doc:name="Transform Message" doc:id="7b71d82d-2094-4744-b56e-a155a8767617" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="coverageBenefitId" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.coverageBenefitId ++ payload.Id]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform doc:name="benefitItem" doc:id="8b5725b0-7264-451e-9bfa-f39e98072a4b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv lineSeparator = '\r\n', quoteValues = true
+import * from dw::core::Strings
+---
+vars.service map (item, value) -> {
+	
+	Name: vars.insuranceInfo.providerName[value] ++ 'CoverageBenefit-item',
+	MemberId: vars.payerId[value],
+	CoverageBenefitId: vars.coverageBenefitId[value],
+	ServiceType: item.serviceType default null,
+	Procedure_Code__c: item.procedureCode default null,
+	Diagnosis_Code__c: item.diagnosisCode default null,
+	Service_Date__c: item.serviceDate as Date {format: 'yyyy-MM-dd'},
+	IsInPlanNetwork: 'True' as Boolean,
+	Leg_External_Id__c: vars.insuranceInfo.providerName[value] ++ item.serviceType default null ++ 'CoverageBenefit-item'
+	
+	
+	
+	
+	
+	
+	
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="ObjectName" ><![CDATA["CoverageBenefitItem"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="com-createAccount-records" doc:id="e1718718-41b0-4bf5-a6e3-31480e9df014" name="com-createAccount-records"/>
+	</sub-flow>
+	
+	
+	</mule>

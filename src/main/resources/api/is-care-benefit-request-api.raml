@@ -1,0 +1,53 @@
+#%RAML 1.0
+title: IS Care Benefit Request API
+description: Mule Integration for creating Care Benefit Verification Requests in Salesforce Health Cloud
+version: v1
+baseUri: 
+mediaType: [application/json]
+protocols:
+  - HTTPS
+  - HTTP
+securitySchemes:
+  securityHeader: !include /security-scheme/http-security-scheme.raml
+securedBy:
+  - securityHeader
+types:
+  bvq: !include /dataTypes/createbnvRequest.raml
+traits:
+  common-error: !include /traits/http-error-response.raml
+/care-benefit-verification:
+  displayName: This resource will create and process the care benefit verification for the patient.
+  post:
+    is: [common-error]
+    displayName: Create the benefit verification request.
+    description: This request is to create the benefit verification request.
+    body:
+      application/json:
+        type: bvq
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Benefit verification request created successfully",
+                "statusCode": 200
+              }
+  get:
+    is: [common-error]
+    displayName: Retrieve the created benefit verification request for the patient.
+    description: This request will give all the created benefit verification requests.
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                  Id : "1234",
+                  Name: "Benefit Verification Name",
+                  MemberPlan: "BlueCross Dental premium plan",
+                  PatientName: "DevaHanumanula"
+              }
+      
+
+    

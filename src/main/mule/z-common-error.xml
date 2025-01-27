@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="global-error-handling" doc:id="e2d84418-c182-47cb-b10c-d93dfcbd0e9a" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cec92277-5e36-4b72-8c7d-ae5ad09d8301" type="ANY">
+			<logger level="INFO" doc:name="Log Error : Start Error Flow" doc:id="dfa384e2-2061-4d09-a797-838dec1436b7" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "ERROR",&#10;	"uuid" : uuid(),&#10;	"message": "Error Occured while processing the records.",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+			<flow-ref doc:name="error-response" doc:id="2f6c28be-c6b0-423a-ba93-ada34a6b338b" name="error-response"/>
+		</on-error-propagate>
+	</error-handler>
+	<sub-flow name="error-response" doc:id="bbbfd82a-b5f0-43fc-a8f8-63df930460fa" >
+		<ee:transform doc:name="errorMessage" doc:id="0cde42d4-e8b2-4ccf-a7c4-713b3f409444" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var errorType = ((error.errorType.namespace default "") ++ ":" ++ (error.errorType.identifier default "")) default error.errorType
+var errorDetails = errorType match {
+	//HTTP Related Errors
+	case "HTTP:BAD_REQUEST" -> {message: "Invalid Request", statusCode: 400}
+	case "HTTP:UNAUTHORIZED" -> {message: "Unauthorized Access", statusCode: 401}
+	case "HTTP:FORBIDDEN" -> {message: "Forbidden Access", statusCode: 403}
+	case "HTTP:NOT_FOUND" -> {message: "Resource Not Found", statusCode: 404}
+	case "HTTP:METHOD_NOT_ALLOWED" -> {message: "Method Not Allowed", statusCode: 405}
+	case "HTTP:TIMEOUT" -> {message: "Request TimeOut", statusCode: 408}
+	case "HTTP:TOO_MANY_REQUESTS" -> {message: "Too Many Requests", statusCode: 429}
+	case "HTTP:INTERNAL_SERVER_ERROR" -> {message: "Internal Server Error", statusCode: 500}
+	case "HTTP:BAD_GATEWAY" -> {message: "Bad Gateway", statusCode: 502}
+	case "HTTP:SERVICE_UNAVAILABLE" -> {message: "Service Unavailable", statusCode: 503}
+	case "HTTP:GATEWAY_TIMEOUT" -> {message: "Gateway Timeout", statusCode: 504}
+	//APIKIT
+	case "APIKIT:BAD_REQUEST" -> {message: "Invalid Request", statusCode: 400}
+	case "APIKIT:UNAUTHORIZED" -> {message: "Unauthorized Access", statusCode: 401}
+	case "APIKIT:FORBIDDEN" -> {message: "Forbidden Access", statusCode: 403}
+	case "APIKIT:NOT_FOUND" -> {message: "Resource Not Found", statusCode: 404}
+	case "APIKIT:METHOD_NOT_ALLOWED" -> {message: "Method Not Allowed", statusCode: 405}
+	case "APIKIT:UNSUPPORTED_MEDIA_TYPE" -> {message: "Unsupported Media Type", statusCode: 415}
+	case "APIKIT:NOT_ACCEPTABLE"-> {message: "Request Not acceptable", statusCode: 406}
+	
+	
+	
+	// Salesforce Related Errors
+	case "SALESFORCE:UNKNOWN" -> {message: "Salesforce Unknown Error", statusCode: 500}
+	case "SALESFORCE:INVALID_INPUT" -> {message: "Salesforce Invalid Field/Invalid Object", statusCode: 400}
+	case "SALESFORCE:INVALID_ID" -> {message: "Salesforce Invalid ID", statusCode: 400}
+	case "SALESFORCE:REQUIRED_FIELD_MISSING" -> {message: "Salesforce Required Field Missing", statusCode: 400}
+	case "SALESFORCE:INVALID_QUERY" -> {message: "Invalid Request", statusCode: 400}
+	case "SALESFORCE:AUTHENTICATION" -> {message: "Salesforce Authentication Error", statusCode: 401}
+	case "SALESFORCE:FORBIDDEN" -> {message: "Salesforce Forbidden Access", statusCode: 403}
+	case "SALESFORCE:DUPLICATE_VALUE" -> {message: "Salesforce Duplicate Value Found", statusCode: 409}
+	case "SALESFORCE:REQUEST_LIMIT" -> {message: "Salesforce Request Limit Exceeded", statusCode: 429}
+	
+	case "MULE:EXPRESSION" -> {message: "Dataweave Expression error", statusCode: 400}
+	
+	
+	else -> {message: "Unknown Error", statusCode: 500}
+
+	
+	
+}
+---
+{
+	error: {
+		message: errorDetails.message,
+		description: error.detailedDescription default "No description available",
+		errorType: errorType,
+		statusCode: errorDetails.statusCode
+		}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="errorResponse" ><![CDATA[%dw 2.0
+output application/json
+var errorType = ((error.errorType.namespace default "") ++ ":" ++ (error.errorType.identifier default "")) default error.errorType
+var errorDetails = errorType match {
+	//HTTP Related Errors
+	case "HTTP:BAD_REQUEST" -> {message: "Invalid Request", statusCode: 400}
+	case "HTTP:UNAUTHORIZED" -> {message: "Unauthorized Access", statusCode: 401}
+	case "HTTP:FORBIDDEN" -> {message: "Forbidden Access", statusCode: 403}
+	case "HTTP:NOT_FOUND" -> {message: "Resource Not Found", statusCode: 404}
+	case "HTTP:METHOD_NOT_ALLOWED" -> {message: "Method Not Allowed", statusCode: 405}
+	case "HTTP:TIMEOUT" -> {message: "Request TimeOut", statusCode: 408}
+	case "HTTP:TOO_MANY_REQUESTS" -> {message: "Too Many Requests", statusCode: 429}
+	case "HTTP:INTERNAL_SERVER_ERROR" -> {message: "Internal Server Error", statusCode: 500}
+	case "HTTP:BAD_GATEWAY" -> {message: "Bad Gateway", statusCode: 502}
+	case "HTTP:SERVICE_UNAVAILABLE" -> {message: "Service Unavailable", statusCode: 503}
+	case "HTTP:GATEWAY_TIMEOUT" -> {message: "Gateway Timeout", statusCode: 504}
+	//APIKIT
+	case "APIKIT:BAD_REQUEST" -> {message: "Invalid Request", statusCode: 400}
+	case "APIKIT:UNAUTHORIZED" -> {message: "Unauthorized Access", statusCode: 401}
+	case "APIKIT:FORBIDDEN" -> {message: "Forbidden Access", statusCode: 403}
+	case "APIKIT:NOT_FOUND" -> {message: "Resource Not Found", statusCode: 404}
+	case "APIKIT:METHOD_NOT_ALLOWED" -> {message: "Method Not Allowed", statusCode: 405}
+	case "APIKIT:UNSUPPORTED_MEDIA_TYPE" -> {message: "Unsupported Media Type", statusCode: 415}
+	case "APIKIT:NOT_ACCEPTABLE"-> {message: "Request Not acceptable", statusCode: 406}
+	
+	
+	
+	// Salesforce Related Errors
+	case "SALESFORCE:UNKNOWN" -> {message: "Salesforce Unknown Error", statusCode: 500}
+	case "SALESFORCE:INVALID_FIELD" -> {message: "Salesforce Invalid Field", statusCode: 400}
+	case "SALESFORCE:INVALID_ID" -> {message: "Salesforce Invalid ID", statusCode: 400}
+	case "SALESFORCE:REQUIRED_FIELD_MISSING" -> {message: "Salesforce Required Field Missing", statusCode: 400}
+	case "SALESFORCE:INVALID_QUERY" -> {message: "Invalid Request", statusCode: 400}
+	case "SALESFORCE:AUTHENTICATION" -> {message: "Salesforce Authentication Error", statusCode: 401}
+	case "SALESFORCE:FORBIDDEN" -> {message: "Salesforce Forbidden Access", statusCode: 403}
+	case "SALESFORCE:DUPLICATE_VALUE" -> {message: "Salesforce Duplicate Value Found", statusCode: 409}
+	case "SALESFORCE:REQUEST_LIMIT" -> {message: "Salesforce Request Limit Exceeded", statusCode: 429}
+	
+	case "MULE:EXPRESSION" -> {message: "Dataweave Expression error", statusCode: 400}
+	
+	
+	else -> {message: "Unknown Error", statusCode: 500}
+
+	
+	
+}
+---
+{
+	error: {
+		message: errorDetails.message,
+		description: error.description default "No description available",
+		errorType: errorType,
+		statusCode: errorDetails.statusCode
+		}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log Error : Flow" doc:id="6aa71be8-2808-407a-a4a6-2410fe36e13f" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "ERROR",&#10;	"uuid" : uuid(),&#10;	"message": "Captured the Error Information",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
+	</sub-flow>
+</mule>
