@@ -24,8 +24,5 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
 			</tls:context>
 		</http:listener-connection>
 	</http:listener-config>
-	<cloudhub:config name="CloudHub_Config" doc:name="CloudHub Config" doc:id="0833f6c5-1caa-4677-9222-c24a1f25e698" >
-		<cloudhub:connection username="${cloudhub.user}" password="${secure::sf.password}" environment="DEV" />
-	</cloudhub:config>
-	<api-gateway:autodiscovery apiId="${api.Id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="803253a7-3ed5-4bdc-8a90-9396084b1ce4" flowRef="care-benefit-request-api-main" />
+	<api-gateway:autodiscovery apiId="${api.Id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="7475463e-c252-4c26-aad7-35241789ec3c" flowRef="care-benefit-request-api-main" />
 </mule>

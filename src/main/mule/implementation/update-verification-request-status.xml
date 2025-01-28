@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
-	<flow name="update-verification-request-statusFlow" doc:id="fa6a00af-dfae-4f5b-806c-3918682f800a" initialState="stopped">
+	<flow name="update-verification-request-statusFlow" doc:id="fa6a00af-dfae-4f5b-806c-3918682f800a">
 		<scheduler doc:name="Scheduler" doc:id="76ee2025-86a7-4907-a588-bdf9be0021c8" >
 			<scheduling-strategy >
 				<cron expression="0 0 7 ? * * 2050" timeZone="UTC" />
