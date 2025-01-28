@@ -1,0 +1,59 @@
+[
+  {
+    
+    "Id": "0n2fJ0000000DjdQAE",
+    "Leg_External_Id__c": "JohnDoeBlueCrossBlueShieldCBVR2025-01",
+    "MemberPlanId": "0SqfJ000000099lSAA",
+    "CoverageBenefit": {
+      "attributes": {
+        "type": "CoverageBenefit",
+        "url": "/services/data/v56.0/sobjects/CoverageBenefit/0TLfJ0000000CafWAE"
+      },
+      "Name": "BlueCrossBlueShieldDental-Coverage Benefits",
+      "MemberPlanId": "0SqfJ000000099lSAA",
+      "IndividualInNetworkDeductibleRemaining": 1050,
+      "IndividualInNetworkOutofPocketRemaining": 120,
+      "IndividualOutofNetworkDeductibleRemain": 1300,
+      "IndividualOutofNetworkOutofPocketRemain": 350
+    }
+  },
+  {
+    "attributes": {
+      "type": "CareBenefitVerifyRequest",
+      "url": "/services/data/v56.0/sobjects/CareBenefitVerifyRequest/0n2fJ0000000DjeQAE"
+    },
+    "Id": "0n2fJ0000000DjeQAE",
+    "Leg_External_Id__c": "AliceJohnsonUnitedHealthcareCBVR2025-01",
+    "MemberPlanId": "0SqfJ000000098ASAQ",
+    "CoverageBenefit": {
+      "attributes": {
+        "type": "CoverageBenefit",
+        "url": "/services/data/v56.0/sobjects/CoverageBenefit/0TLfJ0000000CXRWA2"
+      },
+      "Name": "UnitedHealthcareDental-Coverage Benefits",
+      "MemberPlanId": "0SqfJ000000098ASAQ",
+      "IndividualInNetworkDeductibleRemaining": 1050,
+      "IndividualInNetworkOutofPocketRemaining": 120,
+      "IndividualOutofNetworkDeductibleRemain": 1300,
+      "IndividualOutofNetworkOutofPocketRemain": 350
+    }
+  },
+  {
+    
+    "Id": "0n2fJ0000000DjfQAE",
+    "Leg_External_Id__c": "RobertWilliamsAetnaCBVR2025-01",
+    "MemberPlanId": "0SqfJ000000098BSAQ",
+    "CoverageBenefit": {
+      "attributes": {
+        "type": "CoverageBenefit",
+        "url": "/services/data/v56.0/sobjects/CoverageBenefit/0TLfJ0000000CZ3WAM"
+      },
+      "Name": "AetnaDental-Coverage Benefits",
+      "MemberPlanId": "0SqfJ000000098BSAQ",
+      "IndividualInNetworkDeductibleRemaining": 1050,
+      "IndividualInNetworkOutofPocketRemaining": 120,
+      "IndividualOutofNetworkDeductibleRemain": 1300,
+      "IndividualOutofNetworkOutofPocketRemain": 350
+    }
+  }
+]

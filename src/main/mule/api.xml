@@ -132,7 +132,7 @@ output application/json
 payload]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<logger level="INFO" doc:name="Placeholder for Cloudhub Notification" doc:id="b07e52e0-7406-4afb-b08e-266a92982b40" />
+		<logger level="INFO" doc:name="Log INFO : End Main Flow" doc:id="b07e52e0-7406-4afb-b08e-266a92982b40" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Completed the fetch care benefit verification flow",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]'/>
     </flow>
     <flow name="post:\care-benefit-verification:application\json:is-care-benefit-request-api-config">
         <logger level="INFO" doc:name="Log INFO : Start Main Flow" doc:id="0f8bc2fb-b817-4115-9dc8-36eda014c246" message='#[%dw 2.0&#10;import modules::jsonlogger&#10;output application/json&#10;---&#10;&#10;jsonlogger::main(payload: {&#10;	"status": "Starts",&#10;	"uuid" : uuid(),&#10;	"message": "Starting Create Benefit verification request Flow",&#10;	"maskFields": [],&#10;	"appName": app.name,&#10;	"ip": server.ip,&#10;	"flowName": flow.name&#10;})]' />

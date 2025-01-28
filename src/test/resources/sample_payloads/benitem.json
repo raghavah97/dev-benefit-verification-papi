@@ -1,0 +1,50 @@
+[
+  {
+    "attributes": {
+      "type": "CoverageBenefitItem",
+      "url": "/services/data/v56.0/sobjects/CoverageBenefitItem/0SffJ0000000qzWSAQ"
+    },
+    "Id": "0SffJ0000000qzWSAQ",
+    "IsActive": false,
+    "IsInPlanNetwork": true,
+    "CoverageBenefit": {
+      "attributes": {
+        "type": "CoverageBenefit",
+        "url": "/services/data/v56.0/sobjects/CoverageBenefit/0TLfJ0000000CXRWA2"
+      },
+      "Name": "UnitedHealthcareDental-Coverage Benefits"
+    }
+  },
+  {
+    "attributes": {
+      "type": "CoverageBenefitItem",
+      "url": "/services/data/v56.0/sobjects/CoverageBenefitItem/0SffJ0000000qzXSAQ"
+    },
+    "Id": "0SffJ0000000qzXSAQ",
+    "IsActive": false,
+    "IsInPlanNetwork": true,
+    "CoverageBenefit": {
+      "attributes": {
+        "type": "CoverageBenefit",
+        "url": "/services/data/v56.0/sobjects/CoverageBenefit/0TLfJ0000000CZ3WAM"
+      },
+      "Name": "AetnaDental-Coverage Benefits"
+    }
+  },
+  {
+    "attributes": {
+      "type": "CoverageBenefitItem",
+      "url": "/services/data/v56.0/sobjects/CoverageBenefitItem/0SffJ0000000r17SAA"
+    },
+    "Id": "0SffJ0000000r17SAA",
+    "IsActive": false,
+    "IsInPlanNetwork": true,
+    "CoverageBenefit": {
+      "attributes": {
+        "type": "CoverageBenefit",
+        "url": "/services/data/v56.0/sobjects/CoverageBenefit/0TLfJ0000000CafWAE"
+      },
+      "Name": "BlueCrossBlueShieldDental-Coverage Benefits"
+    }
+  }
+]

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="api-test-suite.xml" />
+	<munit:test name="api-test-suite-get:\care-benefit-verification" doc:id="155fe07f-7063-4d18-9f14-5412a1c67127" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d64dbc44-7b6a-4f65-ab84-9f0a9992230e" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="careBenefitVerifyRequest" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0c709cc6-7fe0-4ad4-a989-02d277a73e9b" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config1" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('sample_payloads/sf.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\care-benefit-verification" doc:id="7778cea8-a306-4fdf-b3c0-457e3b8e2f0d" name="get:\care-benefit-verification:is-care-benefit-request-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6d8ad07f-cdd6-42c5-af5b-d4664f952a9c" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="update-verification-request-status-test-suite" doc:id="be27298a-2bf3-4735-8d35-405359bb9173" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="64ad0cb7-d8e8-4c3c-a7a4-8c4cc827164f" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="CBVR" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="17f25177-3261-4904-86fb-f4291287a540" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config1" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="covBenVerifyReq" attributeName="target" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="covBenVerifyReq" value="#[MunitTools::getResourceAsString('sample_payloads/BenVerifyReq.json')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bb9e2d4b-7d2b-443c-9dd3-8dc9da6d3bf9" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="BenItem" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="72fd3e6b-6fc8-495d-9e94-2f6ae21aa31c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config1" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="covBenfitItem" attributeName="target" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="covBenfitItem" value="#[MunitTools::getResourceAsString('sample_payloads/benitem.json')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to update-verification-request-statusFlow" doc:id="6acf63ca-a903-474a-bc42-875003ff9259" name="update-verification-request-statusFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="c329d561-a214-4f51-b4ab-b61bd50a00d9" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="INFO" attributeName="level" />
+					<munit-tools:with-attribute whereValue="Log INFO : End Update CBVR Flow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="063c1c42-89e6-452b-9306-6665ed14076b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="api-test-suite-post:\care-benefit-verification" doc:id="5f27d4c5-ca6c-46bc-bac3-66e3e5f93776" description="Test" expectedErrorType="EXPRESSION">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d9ec3ed6-0267-41ea-af08-22ee8b9ade2f" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="59eb2126-2a2c-4263-b71a-45064fdcf20b" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config1" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="perAccRt" attributeName="target" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="perAccRt" value="#[MunitTools::getResourceAsString('sample_payloads/AccRt.json')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="5005e23e-20d1-470f-9f94-41e8d7849e02" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c6d32471-7077-498a-9cb0-482e6b46f682" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config1" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="insPvdrRt" attributeName="target" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="insPvdrRt" value="#[MunitTools::getResourceAsString('sample_payloads/provider.json')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="4a19625b-88eb-4ce9-9b59-6d4f76fc3fe4" >
+				<munit:payload value="#[MunitTools::getResourceAsString('sample_payloads/Request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\care-benefit-verification:application\json:" doc:id="30500be7-8b71-4802-96d5-96d44aa1209d" name="post:\care-benefit-verification:application\json:is-care-benefit-request-api-config"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>
