@@ -1,5 +1,3 @@
-# dev-benefit-verification-papi
-
 
 ## 📌 Project Overview <br />
 The developed Mule Process API exposes a RESTful API with endpoints to manage Care Benefit Verification records in Salesforce Health Cloud. It provides functionality to:
@@ -37,6 +35,9 @@ The developed Mule Process API exposes a RESTful API with endpoints to manage Ca
 - Utilized json logger module for capturing Logs as Structured JSON Object for easy readability.
 ### Cloud-hub Deployment
 - Hosted the application in CloudHub 1.0.
+### Salesforce Page Layouts and Objects Customization.
+- Modified Page layouts to remove the irrelavent fields.
+- Customized the fields to add the missing fields.
 
 ## 🚀 Application SetUp
 ### 1️⃣ Prerequisites
@@ -50,9 +51,27 @@ The developed Mule Process API exposes a RESTful API with endpoints to manage Ca
 - Download the code repository from the link.
 - Open Anypoint Studio.
 - Click on File and import
-- ![image](https://github.com/user-attachments/assets/724da937-7cfe-4062-9101-403afb4db192)
+![image](https://github.com/user-attachments/assets/724da937-7cfe-4062-9101-403afb4db192)
 - Select the option as mentioned in the image and Click next
-- 
+- Browse the project root folder,Select Mule Server Runtime as 4.8 and click finish.
+- To run the application right click on project and select Run As -> Run Configurations.
+- ![image](https://github.com/user-attachments/assets/58776a19-df9c-4c91-a1e4-9a87ca8620ad)
+- You should see the above image and click on Arguments. Paste the below arguments in VM arguments.
+  -M-XX:-UseBiasedLocking -M-Dfile.encoding=UTF-8 -M-XX:+UseG1GC -M-XX:+UseStringDeduplication -M-Dmule.deployment.forceParseConfigXmls=true -M-Dmule.env=dev -M-Dmule.key= (Will be sent in seperate email).
+- Once you see deployed you are ready to run the application.
+- Open postman and hit the URL's see the sample request response document for reference.
+
+
+🔗 GitHub Repo: https://github.com/raghavah97/dev-benefit-verification-papi
+🔗 Request Response document: 
+🎬 Demonstration Video : 
+
+🏆 Challenges:
+- Understanding the Salesforce Health Cloud Objects Relationships to create benefit verification request.
+- Getting the Salesforce Health Cloud License 
+
+
+ 
 
    
 
