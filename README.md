@@ -62,13 +62,15 @@ The developed Mule Process API exposes a RESTful API with endpoints to manage Ca
 - Open postman and hit the URL's see the sample request response document for reference.
 
 
-🔗 GitHub Repo: https://github.com/raghavah97/dev-benefit-verification-papi
-🔗 Request Response document: 
-🎬 Demonstration Video : 
+🔗 GitHub Repo: https://github.com/raghavah97/dev-benefit-verification-papi <br />
+🔗 Request Response document: https://docs.google.com/document/d/1HL67s5G8bIGexulGMYC3iOI4O1Ovh7Lfrcv7BbZw0HQ/edit?usp=sharing <br />
+🎬 Demonstration Video : https://drive.google.com/drive/u/0/folders/1Kz59TNuO5sCN57d3gGIyngFgXfYf1t3P <br />
 
-🏆 Challenges:
+## 🏆 Challenges:
 - Understanding the Salesforce Health Cloud Objects Relationships to create benefit verification request.
-- Getting the Salesforce Health Cloud License 
+- Getting the Salesforce Health Cloud License
+## 🤔 Assumptions:
+- Coverage Benefits provided by the Insurance companies were already avalabile in the org with In-Network and Out-Network costs.
 
 
  
