@@ -1,7 +1,7 @@
 # dev-benefit-verification-papi
 
 
-📌 ## Project Overview <br />
+## 📌 Project Overview <br />
 The developed Mule Process API exposes a RESTful API with endpoints to manage Care Benefit Verification records in Salesforce Health Cloud. It provides functionality to:
 <br />
 <br />
@@ -10,7 +10,7 @@ The developed Mule Process API exposes a RESTful API with endpoints to manage Ca
 3. Validate the requests against provided information and update them accordingly.<br />
 <br />
 
-🏗 ## Features
+## 🏗 Features
 ### API Endpoints 
 1.POST /api/care-benefit-verification – Creates a Care Benefit Verification request.<br />
 2.GET /api/care-benefit-verification – Retrieves all created Care Benefit Verification requests.<br />
@@ -28,12 +28,32 @@ The developed Mule Process API exposes a RESTful API with endpoints to manage Ca
 - HTTPS enformed for data transmission. Included key store certificate.<br />
 - Encrypting the sensitive fields using secure property configurations(Blowfish Algorithm).<br />
 - Included the sensitive environment varibles to be masked in mule-artifact.json<br />
-- Applied Client-Id Enforcement and Rate Limiting policy.<br />
+- Applied Client-Id Enforcement and Rate Limiting policy. Used Auto discovery to bind the policies applied in API Manager.<br />
 ### Unit Test Cases.
 - Created Munit Test Cases to ensure API reliability and correctness.
 ### Retry Mechanism
 - Implemented Until Successsful and retry mechanism for handling transient Salesforce Connectivity Errors.
-  
+### Logging
+- Utilized json logger module for capturing Logs as Structured JSON Object for easy readability.
+### Cloud-hub Deployment
+- Hosted the application in CloudHub 1.0.
+
+## 🚀 Application SetUp
+### 1️⃣ Prerequisites
+- Download Anypoint Studio.
+- Java Installation
+- Create Anypoint Platform Account.
+- Salesforce Developer account with Health Cloud Enabled.
+- Request Access token in Salesforce to by-pass two-factor authentication b/w Mule and Salesforce.
+- Postman
+### 2️⃣ Setup Instructions to deploy in local.
+- Download the code repository from the link.
+- Open Anypoint Studio.
+- Click on File and import
+- ![image](https://github.com/user-attachments/assets/724da937-7cfe-4062-9101-403afb4db192)
+- Select the option as mentioned in the image and Click next
+- 
+
    
 
   
