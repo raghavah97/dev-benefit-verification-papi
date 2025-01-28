@@ -9,7 +9,7 @@ The developed Mule Process API exposes a RESTful API with endpoints to manage Ca
 2. Retrieve all created Care Benefit Verification requests.<br />
 3. Validate the requests against provided information and update them accordingly.<br />
 <br />
-**API Endpoints**: <br />
+### API Endpoints: <br />
 1.POST /api/care-benefit-verification – Creates a Care Benefit Verification request.<br />
 2.GET /api/care-benefit-verification – Retrieves all created Care Benefit Verification requests.<br />
 3.Scheduler – Executes periodically or can be triggered manually to validate and update requests.<br />
